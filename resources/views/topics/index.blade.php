@@ -29,7 +29,7 @@
                             </li>
                         </ul>
                     </div>
-
+                </div>
                 <div class="card-body">
                     {{-- 话题列表 --}}
                     @include('topics._topic_list', ['topics' => $topics])
