@@ -38,6 +38,7 @@ class TopicReplied extends Notification
 
     public function toDatabase($notifiable)
     {
+
         $topic = $this->reply->topic;
         $link =  $topic->link(['#reply' . $this->reply->id]);
 
