@@ -9,21 +9,15 @@ use App\Http\Requests\Api\TopicRequest;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 use App\Models\User;
+use App\Http\Queries\TopicQuery;
 
 class TopicsController extends Controller
 {
 
 
-    public function index(Request $request, Topic $topic)
+    public function index(Request $request, TopicQuery $query)
     {
-        $topics = QueryBuilder::for(Topic::class)
-            ->allowedIncludes('user', 'category')
-            ->allowedFilters([
-                'title',
-                AllowedFilter::exact('category_id'),
-                AllowedFilter::scope('withOrder')->default('recentReplied'),
-            ])
-            ->paginate();
+        $topics = $query->paginate();
 
         return TopicResource::collection($topics);
     }
@@ -57,20 +51,18 @@ class TopicsController extends Controller
         return response(null, 204);
     }
 
-    public function userIndex(Request $request, User $user)
+    public function userIndex(Request $request, User $user, TopicQuery $query)
     {
-        $query = $user->topics()->getQuery();
-
-        $topics = QueryBuilder::for($query)
-            ->allowedIncludes('user', 'category')
-            ->allowedFilters([
-                'title',
-                AllowedFilter::exact('category_id'),
-                AllowedFilter::scope('withOrder')->default('recentReplied'),
-            ])
-            ->paginate();
+        $topics = $query->where('user_id', $user->id)->paginate();
 
         return TopicResource::collection($topics);
+    }
+
+
+    public function show($topicId, TopicQuery $query)
+    {
+        $topic = $query->findOrFail($topicId);
+        return new TopicResource($topic);
     }
 
 
