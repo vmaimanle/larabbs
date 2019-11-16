@@ -21,6 +21,12 @@ class NotificationsController extends Controller
         ]);
     }
 
+    public function read(Request $request)
+    {
+        $request->user()->markAsRead();
+
+        return response(null, 204);
+    }
 
 
 
